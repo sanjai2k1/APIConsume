@@ -1,0 +1,50 @@
+﻿@{
+    ViewData["Title"] = "All Reservations";
+}
+@model IEnumerable<Reservation>
+
+    <h1 class="display-4">Reservation Details</h1>
+    <a asp-action="AddReservation" class="btn btn-sm btn-primary" > Book Ticket </a>
+    <a asp-action="GetReservation" class="btn btn-sm btn-Secondary" > Get Reservation </a>
+
+
+    <table class="table table-sm table-striped table-bordered m-2">
+        <thead>
+            <tr>
+                <th>ID</th>
+            <th>Name</th>
+            <th>StartLocation</th>
+            <th>EndLocation</th>
+            <th>Update</th>
+            <th>Delete</th>
+
+
+            </tr>
+        </thead>
+        <tbody>
+        @foreach(var r in Model)
+        {
+            <tr>
+            <td>@r.Id</td>
+        <td>@r.Name</td>
+        <td>@r.StartLocation</td>
+        <td>@r.EndLocation</td>
+        <td><a asp-action="UpdateReservation" asp-route-id="@r.Id" class="btn btn-warning" >Update</a></td>
+        <td>
+            <form asp-action="DeleteReservation" method="post">
+                <button type="submit" class="btn btn-danger">Delete</button>
+                <input type="hidden" value="@r.Id" name="ReservationId"/>
+            </form>
+        </td>
+            </tr>
+        }
+</tbody>
+    </table>
+
+
+
+
+
+
+
+

@@ -74,12 +74,13 @@ namespace APIConsume.Controllers
                     {
                         string apiResponse = await response.Content.ReadAsStringAsync();
                         newBooking = JsonConvert.DeserializeObject<Reservation>(apiResponse);
+                        Console.WriteLine(apiResponse);
                     }
 
-                    return View(newBooking);
                 }
             }
 
+            return View(newBooking);
 
         }
 
@@ -96,6 +97,7 @@ namespace APIConsume.Controllers
                     {
                         string apiResponse = await response.Content.ReadAsStringAsync();
                         reservation = JsonConvert.DeserializeObject<Reservation>(apiResponse);
+                        Console.WriteLine(apiResponse);
                         //Console.WriteLine(reservation.Id+" "+reservation.EndLocation);
                     }
                     else
@@ -116,22 +118,49 @@ namespace APIConsume.Controllers
             Reservation UpdateBooking = new Reservation();
             using (var httpClient = new HttpClient())
             {
+                //var json = JsonConvert.SerializeObject(reservation);
+
+                //var jsonContent = new StringContent(json, Encoding.UTF8, "application/json");
+
+                //using (var response = await httpClient.PutAsync("http://localhost:5018/api/Reservation/" , jsonContent ))
+                //{
+                //    string apiResponse = await response.Content.ReadAsStringAsync();
+                //    UpdateBooking = JsonConvert.DeserializeObject<Reservation>(apiResponse);
+                //    Console.WriteLine(apiResponse);
+                //    ViewBag.Result = "success";
+                //}
+
                 var content = new MultipartFormDataContent();
                 content.Add(new StringContent(reservation.Id.ToString()), "id");
                 content.Add(new StringContent(reservation.Name), "name");
                 content.Add(new StringContent(reservation.StartLocation), "startLocation");
                 content.Add(new StringContent(reservation.EndLocation), "endLocation");
-                using (var response = await httpClient.GetAsync("http://localhost:5018/api/Reservation/" + content))
+
+                using (var response = await httpClient.PutAsync("http://localhost:5018/api/Reservation/", content))
                 {
                     string apiResponse = await response.Content.ReadAsStringAsync();
                     UpdateBooking = JsonConvert.DeserializeObject<Reservation>(apiResponse);
-                    Console.WriteLine(UpdateBooking.Id);
+                    Console.WriteLine(apiResponse);
                     ViewBag.Result = "success";
                 }
 
-
             }
             return View(UpdateBooking);
+        }
+
+        [HttpPost]
+
+        public async Task<IActionResult> DeleteReservation(int ReservationId)
+        {
+            using (var httpClient = new HttpClient())
+            {
+                using (var response = await httpClient.DeleteAsync("http://localhost:5018/api/Reservation/"+ ReservationId))
+                {
+                    string apiResponse = await response.Content.ReadAsStringAsync();
+                }
+            }
+
+            return RedirectToAction("Index");
         }
 
 
